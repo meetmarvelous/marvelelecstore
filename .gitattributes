@@ -1,0 +1,3 @@
+# Force all text files to use LF and never change them
+* text=auto eol=lf
+

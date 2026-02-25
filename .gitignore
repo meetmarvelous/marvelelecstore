@@ -1,0 +1,27 @@
+# MarvelStore — Version Control Exclusions
+
+# 1. Environment-specific Configuration
+config.php
+
+# 2. Sensitive Diagnostic Reports
+report.txt
+
+# 3. Development / Setup Scripts
+seed_demo.php
+setup_database.php
+debug_diff.php
+debug_html.php
+test_mono.php
+test_page.php
+
+# 4. OS / IDE Artifacts
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# 5. Application Temp / Output
+asset_backup/
+uploads/
+logs/*.log
+temp/
