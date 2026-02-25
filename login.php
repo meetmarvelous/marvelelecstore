@@ -32,7 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user = $stmt->fetch();
 
             if ($user && password_verify($password, $user['password_hash'])) {
-                // Success!
                 login_user($user);
                 set_flash('success', 'Welcome back, ' . $user['full_name'] . '!');
                 redirect('index.php');
@@ -80,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php endif; ?>
                 <?= render_flash() ?>
 
-                <form method="POST" action="login.php" class="needs-validation" novalidate="">
+                <form method="POST" action="" class="needs-validation" novalidate="">
                   <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                   <div class="form-group">
                     <label for="username">Username</label>
