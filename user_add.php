@@ -7,6 +7,7 @@ require_once INCLUDES_PATH . 'db.php';
 require_once INCLUDES_PATH . 'auth.php';
 require_once INCLUDES_PATH . 'csrf.php';
 require_once INCLUDES_PATH . 'helpers.php';
+require_once INCLUDES_PATH . 'logger.php';
 require_role('admin');
 
 $pdo = get_db();
@@ -31,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $hash = password_hash($password, PASSWORD_DEFAULT);
                 $stmt = $pdo->prepare("INSERT INTO users (username, full_name, password_hash, role) VALUES (?, ?, ?, ?)");
                 $stmt->execute([$username, $full_name, $hash, $role]);
+                log_activity('user_create', 'user', (int)$pdo->lastInsertId(), "Created user '{$username}' ({$role})");
                 set_flash('success', 'User created successfully.');
                 redirect('users.php');
             } catch (PDOException $e) {

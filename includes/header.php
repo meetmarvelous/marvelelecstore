@@ -51,6 +51,15 @@ $extra_css = $extra_css ?? [];
             <div class="dropdown-menu dropdown-menu-right pullDown">
               <div class="dropdown-title"><?= e(current_user('full_name')) ?><br><small class="text-muted"><?= ucfirst(e(current_user('role'))) ?></small></div>
               <div class="dropdown-divider"></div>
+              <a href="<?= BASE_URL ?>change_password.php" class="dropdown-item has-icon">
+                <i class="fas fa-key"></i> Change Password
+              </a>
+              <?php if (current_user('role') === 'admin'): ?>
+              <a href="<?= BASE_URL ?>settings.php" class="dropdown-item has-icon">
+                <i class="fas fa-cog"></i> Settings
+              </a>
+              <?php endif; ?>
+              <div class="dropdown-divider"></div>
               <a href="<?= BASE_URL ?>logout.php" class="dropdown-item has-icon text-danger">
                 <i class="fas fa-sign-out-alt"></i> Logout
               </a>

@@ -7,6 +7,7 @@ require_once INCLUDES_PATH . 'db.php';
 require_once INCLUDES_PATH . 'auth.php';
 require_once INCLUDES_PATH . 'csrf.php';
 require_once INCLUDES_PATH . 'helpers.php';
+require_once INCLUDES_PATH . 'logger.php';
 require_login();
 
 $pdo = get_db();
@@ -30,7 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($errors)) {
             $stmt = $pdo->prepare("INSERT INTO repairs (user_id, customer_name, customer_phone, device_model, device_passcode, fault_description, repair_cost) VALUES (?, ?, ?, ?, ?, ?, ?)");
             $stmt->execute([current_user('id'), $customer_name, $customer_phone, $device_model, $device_passcode, $fault, $repair_cost]);
-            set_flash('success', 'Repair ticket created (#' . $pdo->lastInsertId() . ').');
+            $rid = (int)$pdo->lastInsertId();
+            log_activity('repair_create', 'repair', $rid, "Repair #{$rid} — {$device_model} for {$customer_name}");
+            set_flash('success', 'Repair ticket created (#' . $rid . ').');
             redirect('repairs.php');
         }
     }

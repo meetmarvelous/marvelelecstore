@@ -8,6 +8,7 @@ require_once INCLUDES_PATH . 'auth.php';
 require_once INCLUDES_PATH . 'csrf.php';
 require_once INCLUDES_PATH . 'helpers.php';
 require_once INCLUDES_PATH . 'db.php';
+require_once INCLUDES_PATH . 'logger.php';
 
 // Redirect if already logged in
 if (is_logged_in()) {
@@ -33,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($user && password_verify($password, $user['password_hash'])) {
                 login_user($user);
+                log_activity('login', 'user', (int)$user['id'], "User '{$user['username']}' logged in");
                 set_flash('success', 'Welcome back, ' . $user['full_name'] . '!');
                 redirect('index.php');
             } else {

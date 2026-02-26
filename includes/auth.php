@@ -64,6 +64,8 @@ function logout_user(): void {
 
 function current_user(?string $key = null): mixed {
     if ($key) {
+        // Map 'id' to 'user_id' since session stores it as 'user_id'
+        if ($key === 'id') $key = 'user_id';
         return $_SESSION[$key] ?? null;
     }
     return [

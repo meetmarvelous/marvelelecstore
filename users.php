@@ -7,6 +7,7 @@ require_once INCLUDES_PATH . 'db.php';
 require_once INCLUDES_PATH . 'auth.php';
 require_once INCLUDES_PATH . 'csrf.php';
 require_once INCLUDES_PATH . 'helpers.php';
+require_once INCLUDES_PATH . 'logger.php';
 require_role('admin');
 
 $pdo = get_db();
@@ -18,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && input_str('action') === 'toggle') {
         if ($uid != current_user('id')) { // Don't deactivate self
             $stmt = $pdo->prepare("UPDATE users SET is_active = NOT is_active WHERE id = ?");
             $stmt->execute([$uid]);
+            log_activity('user_toggle', 'user', $uid, "Toggled user status (id={$uid})");
             set_flash('success', 'User status updated.');
         } else {
             set_flash('danger', 'You cannot deactivate your own account.');

@@ -77,7 +77,18 @@ function is_menu_open(array $pages, string $current): string {
                 <li class="<?= is_active('user_add.php', $current_page) ?>"><a class="nav-link" href="<?= BASE_URL ?>user_add.php">Add User</a></li>
               </ul>
             </li>
+            <li class="<?= is_active('activity_log.php', $current_page) ?>">
+              <a href="<?= BASE_URL ?>activity_log.php" class="nav-link"><i data-feather="clock"></i><span>Activity Log</span></a>
+            </li>
             <?php endif; ?>
+
+            <!-- ── Customers (Disabled — re-enable when ready) ── -->
+            <!--
+            <li class="menu-header">Customers</li>
+            <li class="<?= is_active('customers.php', $current_page) ?>">
+              <a href="<?= BASE_URL ?>customers.php" class="nav-link"><i data-feather="users"></i><span>Customers</span></a>
+            </li>
+            -->
 
           </ul>
         </aside>

@@ -7,6 +7,7 @@ require_once INCLUDES_PATH . 'db.php';
 require_once INCLUDES_PATH . 'auth.php';
 require_once INCLUDES_PATH . 'csrf.php';
 require_once INCLUDES_PATH . 'helpers.php';
+require_once INCLUDES_PATH . 'logger.php';
 require_login();
 
 $pdo = get_db();
@@ -34,6 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
                 $stmt = $pdo->prepare("INSERT INTO products (category_id, name, brand, sku, imei_serial, cost_price, selling_price, quantity, low_stock_threshold) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 $stmt->execute([$category_id, $name, $brand, $sku, $imei_serial, $cost_price, $selling_price, $quantity, $threshold]);
+                $pid = (int)$pdo->lastInsertId();
+                log_activity('product_add', 'product', $pid, "Added product '{$name}' (qty: {$quantity}, price: {$selling_price})");
                 set_flash('success', 'Product added successfully.');
                 redirect('products.php');
             } catch (PDOException $e) {

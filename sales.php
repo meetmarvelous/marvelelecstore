@@ -52,6 +52,7 @@ require_once INCLUDES_PATH . 'sidebar.php';
               <th>#</th>
               <th>Date</th>
               <th>Cashier</th>
+              <th>Customer</th>
               <th>Items</th>
               <th>Payment</th>
               <th>Discount</th>
@@ -65,6 +66,7 @@ require_once INCLUDES_PATH . 'sidebar.php';
               <td><?= (int)$s['id'] ?></td>
               <td><?= e(date('M d, Y h:ia', strtotime($s['created_at']))) ?></td>
               <td><?= e($s['cashier'] ?? 'N/A') ?></td>
+              <td><?= !empty($s['customer_name']) ? e($s['customer_name']) : '<span class="text-muted">—</span>' ?></td>
               <td><span class="badge badge-light"><?= (int)$s['item_count'] ?></span></td>
               <td><span class="badge badge-info"><?= ucfirst(e($s['payment_method'])) ?></span></td>
               <td><?= format_naira($s['discount']) ?></td>

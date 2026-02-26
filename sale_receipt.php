@@ -67,6 +67,12 @@ $items = $stmt->fetchAll();
     <div><span>Receipt #:</span><span><?= (int)$sale['id'] ?></span></div>
     <div><span>Date:</span><span><?= date('M d, Y h:i A', strtotime($sale['created_at'])) ?></span></div>
     <div><span>Cashier:</span><span><?= e($sale['cashier'] ?? 'N/A') ?></span></div>
+    <?php if (!empty($sale['customer_name'])): ?>
+    <div><span>Customer:</span><span><?= e($sale['customer_name']) ?></span></div>
+    <?php endif; ?>
+    <?php if (!empty($sale['serial_number'])): ?>
+    <div><span>IMEI/S.N:</span><span><?= e($sale['serial_number']) ?></span></div>
+    <?php endif; ?>
     <div><span>Payment:</span><span><?= ucfirst(e($sale['payment_method'])) ?></span></div>
   </div>
 

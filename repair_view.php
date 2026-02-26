@@ -9,6 +9,7 @@ require_once INCLUDES_PATH . 'db.php';
 require_once INCLUDES_PATH . 'auth.php';
 require_once INCLUDES_PATH . 'csrf.php';
 require_once INCLUDES_PATH . 'helpers.php';
+require_once INCLUDES_PATH . 'logger.php';
 require_login();
 
 $pdo = get_db();
@@ -35,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && input_str('action') === 'update_sta
         if (in_array($new_status, $allowed)) {
             $stmt = $pdo->prepare("UPDATE repairs SET status = ? WHERE id = ?");
             $stmt->execute([$new_status, $id]);
+            log_activity('repair_status', 'repair', $id, "Repair #{$id} status changed to " . ucfirst($new_status));
             set_flash('success', 'Status updated to ' . ucfirst($new_status) . '.');
             redirect('repair_view.php?id=' . $id);
         }
@@ -77,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && input_str('action') === 'add_part')
                 $stmt->execute([$line_total, $id]);
 
                 $pdo->commit();
+                log_activity('repair_part', 'repair', $id, "Added part '{$product['name']}' (qty: {$qty}) to Repair #{$id}");
                 set_flash('success', 'Part added and stock deducted.');
                 redirect('repair_view.php?id=' . $id);
             } catch (Exception $e) {

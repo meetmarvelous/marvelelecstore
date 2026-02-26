@@ -8,6 +8,7 @@ require_once INCLUDES_PATH . 'db.php';
 require_once INCLUDES_PATH . 'auth.php';
 require_once INCLUDES_PATH . 'csrf.php';
 require_once INCLUDES_PATH . 'helpers.php';
+require_once INCLUDES_PATH . 'logger.php';
 require_login();
 
 $pdo = get_db();
@@ -18,8 +19,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && input_str('action') === 'delete') {
         set_flash('danger', 'Invalid CSRF token.');
     } else {
         $id = input_int('id');
+        // Get name before deleting for log
+        $stn = $pdo->prepare("SELECT name FROM products WHERE id = ?"); $stn->execute([$id]); $pname = $stn->fetchColumn();
         $stmt = $pdo->prepare("DELETE FROM products WHERE id = ?");
         $stmt->execute([$id]);
+        log_activity('product_delete', 'product', $id, "Deleted product '{$pname}'");
         set_flash('success', 'Product deleted successfully.');
     }
     redirect('products.php');

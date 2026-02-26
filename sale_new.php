@@ -8,6 +8,7 @@ require_once INCLUDES_PATH . 'db.php';
 require_once INCLUDES_PATH . 'auth.php';
 require_once INCLUDES_PATH . 'csrf.php';
 require_once INCLUDES_PATH . 'helpers.php';
+require_once INCLUDES_PATH . 'logger.php';
 require_login();
 
 $pdo = get_db();
@@ -18,6 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'Invalid CSRF token.';
     } else {
         $payment_method = input_str('payment_method');
+        $customer_name  = input_str('customer_name') ?: null;
+        $serial_number  = input_str('serial_number') ?: null;
         $discount       = max(0, (float)input_str('discount'));
         $items_json     = input_str('cart_items');
         $items          = json_decode($items_json, true);
@@ -40,8 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $total = max(0, $subtotal - $discount);
 
                 // Insert sale
-                $stmt = $pdo->prepare("INSERT INTO sales (user_id, payment_method, subtotal, discount, total) VALUES (?, ?, ?, ?, ?)");
-                $stmt->execute([current_user('id'), $payment_method, $subtotal, $discount, $total]);
+                $stmt = $pdo->prepare("INSERT INTO sales (user_id, customer_name, serial_number, payment_method, subtotal, discount, total) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([current_user('id'), $customer_name, $serial_number, $payment_method, $subtotal, $discount, $total]);
                 $sale_id = $pdo->lastInsertId();
 
                 // Insert sale items & deduct stock
@@ -64,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 $pdo->commit();
+                log_activity('sale_create', 'sale', (int)$sale_id, "Sale #{$sale_id} — " . format_naira($total) . " ({$payment_method})");
                 set_flash('success', 'Sale completed! Total: ' . format_naira($total));
                 redirect('sale_receipt.php?id=' . $sale_id);
             } catch (Exception $e) {
@@ -144,18 +148,32 @@ require_once INCLUDES_PATH . 'sidebar.php';
           <form method="POST" id="sale-form">
             <?= csrf_field() ?>
             <input type="hidden" name="cart_items" id="cart-items-input">
+            <input type="hidden" name="discount" id="discount-hidden" value="0">
+
+            <!-- Row 1: Optional fields -->
+            <div class="row">
+              <div class="col-sm-6 col-12 mb-2">
+                <label>Customer Name <small class="text-muted">(optional)</small></label>
+                <input type="text" name="customer_name" class="form-control" placeholder="Walk-in customer">
+              </div>
+              <div class="col-sm-6 col-12 mb-2">
+                <label>IMEI / Serial No. <small class="text-muted">(optional)</small></label>
+                <input type="text" name="serial_number" class="form-control" placeholder="e.g. 356938035643809">
+              </div>
+            </div>
+
+            <!-- Row 2: Payment + Submit -->
             <div class="row align-items-end">
-              <div class="col-md-5">
+              <div class="col-sm-4 col-12 mb-2">
                 <label>Payment Method</label>
                 <select name="payment_method" class="form-control">
                   <option value="cash">Cash</option>
                   <option value="transfer">Transfer</option>
                   <option value="pos">POS</option>
                 </select>
-                <input type="hidden" name="discount" id="discount-hidden" value="0">
               </div>
-              <div class="col-md-7">
-                <button type="submit" class="btn btn-success btn-lg btn-block mt-2"><i class="fas fa-check-circle"></i> Complete Sale</button>
+              <div class="col-sm-8 col-12 mb-2">
+                <button type="submit" class="btn btn-success btn-lg btn-block"><i class="fas fa-check-circle"></i> Complete Sale</button>
               </div>
             </div>
           </form>

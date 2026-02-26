@@ -7,6 +7,7 @@ require_once INCLUDES_PATH . 'db.php';
 require_once INCLUDES_PATH . 'auth.php';
 require_once INCLUDES_PATH . 'csrf.php';
 require_once INCLUDES_PATH . 'helpers.php';
+require_once INCLUDES_PATH . 'logger.php';
 require_login();
 
 $pdo = get_db();
@@ -23,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && input_str('action') === 'add') {
         } else {
             $stmt = $pdo->prepare("INSERT INTO categories (name) VALUES (?)");
             $stmt->execute([$name]);
+            log_activity('category_add', 'category', (int)$pdo->lastInsertId(), "Added category '{$name}'");
             set_flash('success', 'Category added.');
             redirect('categories.php');
         }
@@ -35,8 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && input_str('action') === 'delete') {
         $errors[] = 'Invalid CSRF token.';
     } else {
         $id = input_int('id');
+        $stn = $pdo->prepare("SELECT name FROM categories WHERE id = ?"); $stn->execute([$id]); $cname = $stn->fetchColumn();
         $stmt = $pdo->prepare("DELETE FROM categories WHERE id = ?");
         $stmt->execute([$id]);
+        log_activity('category_delete', 'category', $id, "Deleted category '{$cname}'");
         set_flash('success', 'Category deleted.');
         redirect('categories.php');
     }

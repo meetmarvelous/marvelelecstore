@@ -7,6 +7,7 @@ require_once INCLUDES_PATH . 'db.php';
 require_once INCLUDES_PATH . 'auth.php';
 require_once INCLUDES_PATH . 'csrf.php';
 require_once INCLUDES_PATH . 'helpers.php';
+require_once INCLUDES_PATH . 'logger.php';
 require_login();
 
 $pdo = get_db();
@@ -46,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
                 $stmt = $pdo->prepare("UPDATE products SET category_id=?, name=?, brand=?, sku=?, imei_serial=?, cost_price=?, selling_price=?, quantity=?, low_stock_threshold=? WHERE id=?");
                 $stmt->execute([$category_id, $name, $brand, $sku, $imei_serial, $cost_price, $selling_price, $quantity, $threshold, $id]);
+                log_activity('product_edit', 'product', $id, "Edited product '{$name}'");
                 set_flash('success', 'Product updated successfully.');
                 redirect('products.php');
             } catch (PDOException $e) {
