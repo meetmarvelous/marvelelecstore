@@ -9,7 +9,7 @@ require_once INCLUDES_PATH . 'auth.php';
 require_once INCLUDES_PATH . 'csrf.php';
 require_once INCLUDES_PATH . 'helpers.php';
 require_once INCLUDES_PATH . 'logger.php';
-require_login();
+require_role('admin', 'staff');
 
 $pdo = get_db();
 $errors = [];

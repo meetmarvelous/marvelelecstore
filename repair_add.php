@@ -29,12 +29,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($fault))         $errors[] = 'Fault description is required.';
 
         if (empty($errors)) {
-            $stmt = $pdo->prepare("INSERT INTO repairs (user_id, customer_name, customer_phone, device_model, device_passcode, fault_description, repair_cost) VALUES (?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([current_user('id'), $customer_name, $customer_phone, $device_model, $device_passcode, $fault, $repair_cost]);
+            // Generate unique 8-char alphanumeric code (A-Z, 0-9)
+            $chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            $repair_code = '';
+            for ($i = 0; $i < 8; $i++) {
+                $repair_code .= $chars[random_int(0, strlen($chars) - 1)];
+            }
+
+            $stmt = $pdo->prepare("INSERT INTO repairs (repair_code, user_id, customer_name, customer_phone, device_model, device_passcode, fault_description, repair_cost) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$repair_code, current_user('id'), $customer_name, $customer_phone, $device_model, $device_passcode, $fault, $repair_cost]);
             $rid = (int)$pdo->lastInsertId();
-            log_activity('repair_create', 'repair', $rid, "Repair #{$rid} — {$device_model} for {$customer_name}");
-            set_flash('success', 'Repair ticket created (#' . $rid . ').');
-            redirect('repairs.php');
+            log_activity('repair_create', 'repair', $rid, "Repair #{$rid} ({$repair_code}) — {$device_model} for {$customer_name}");
+            set_flash('success', "Repair ticket created! Code: <strong>{$repair_code}</strong>");
+            redirect('repair_view.php?id=' . $rid);
         }
     }
 }

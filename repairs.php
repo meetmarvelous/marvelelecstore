@@ -49,6 +49,7 @@ require_once INCLUDES_PATH . 'sidebar.php';
           <thead>
             <tr>
               <th>#</th>
+              <th>Code</th>
               <th>Customer</th>
               <th>Device</th>
               <th>Status</th>
@@ -61,12 +62,16 @@ require_once INCLUDES_PATH . 'sidebar.php';
             <?php foreach ($repairs as $r): ?>
             <tr>
               <td><?= (int)$r['id'] ?></td>
+              <td><span class="badge badge-primary" style="letter-spacing:1px"><?= e($r['repair_code'] ?? '—') ?></span></td>
               <td><?= e($r['customer_name']) ?><br><small class="text-muted"><?= e($r['customer_phone'] ?? '') ?></small></td>
               <td><?= e($r['device_model']) ?></td>
               <td><?= status_badge($r['status']) ?></td>
               <td><?= format_naira($r['repair_cost']) ?></td>
               <td><?= time_ago($r['created_at']) ?></td>
-              <td><a href="repair_view.php?id=<?= (int)$r['id'] ?>" class="btn btn-sm btn-info"><i class="fas fa-eye"></i> View</a></td>
+              <td>
+                <a href="repair_view.php?id=<?= (int)$r['id'] ?>" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a>
+                <a href="repair_receipt.php?id=<?= (int)$r['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-receipt"></i></a>
+              </td>
             </tr>
             <?php endforeach; ?>
           </tbody>

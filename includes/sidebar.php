@@ -30,7 +30,8 @@ function is_menu_open(array $pages, string $current): string {
               <a href="<?= BASE_URL ?>index.php" class="nav-link"><i data-feather="monitor"></i><span>Dashboard</span></a>
             </li>
 
-            <!-- ── Inventory ────────────────────────────────────── -->
+            <!-- ── Inventory (Admin Only) ─────────────────────────── -->
+            <?php if ($user_role === 'admin'): ?>
             <li class="menu-header">Inventory</li>
             <li class="dropdown <?= is_menu_open(['products.php','product_add.php','product_edit.php','categories.php'], $current_page) ?>">
               <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="package"></i><span>Inventory</span></a>
@@ -40,8 +41,10 @@ function is_menu_open(array $pages, string $current): string {
                 <li class="<?= is_active('categories.php', $current_page) ?>"><a class="nav-link" href="<?= BASE_URL ?>categories.php">Categories</a></li>
               </ul>
             </li>
+            <?php endif; ?>
 
-            <!-- ── Sales / POS ──────────────────────────────────── -->
+            <!-- ── Sales / POS (Admin + Staff) ────────────────────── -->
+            <?php if (in_array($user_role, ['admin', 'staff'])): ?>
             <li class="menu-header">Sales</li>
             <li class="dropdown <?= is_menu_open(['sale_new.php','sales.php','sale_receipt.php'], $current_page) ?>">
               <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="shopping-bag"></i><span>Sales</span></a>
@@ -50,8 +53,9 @@ function is_menu_open(array $pages, string $current): string {
                 <li class="<?= is_active('sales.php', $current_page) ?>"><a class="nav-link" href="<?= BASE_URL ?>sales.php">Sale History</a></li>
               </ul>
             </li>
+            <?php endif; ?>
 
-            <!-- ── Repairs ──────────────────────────────────────── -->
+            <!-- ── Repairs (All Roles) ────────────────────────────── -->
             <li class="menu-header">Repairs</li>
             <li class="dropdown <?= is_menu_open(['repair_add.php','repairs.php','repair_view.php'], $current_page) ?>">
               <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="briefcase"></i><span>Repairs</span></a>

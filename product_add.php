@@ -8,7 +8,7 @@ require_once INCLUDES_PATH . 'auth.php';
 require_once INCLUDES_PATH . 'csrf.php';
 require_once INCLUDES_PATH . 'helpers.php';
 require_once INCLUDES_PATH . 'logger.php';
-require_login();
+require_role('admin');
 
 $pdo = get_db();
 $categories = $pdo->query("SELECT * FROM categories ORDER BY name")->fetchAll();

@@ -7,13 +7,13 @@ require_once INCLUDES_PATH . 'db.php';
 require_once INCLUDES_PATH . 'auth.php';
 require_once INCLUDES_PATH . 'csrf.php';
 require_once INCLUDES_PATH . 'helpers.php';
-require_login();
+require_role('admin', 'staff');
 
 $pdo = get_db();
 
 $sales = $pdo->query("
     SELECT s.*, u.full_name as cashier,
-        (SELECT COUNT(*) FROM sale_items WHERE sale_id = s.id) as item_count
+        (SELECT COALESCE(SUM(quantity), 0) FROM sale_items WHERE sale_id = s.id) as item_count
     FROM sales s
     LEFT JOIN users u ON s.user_id = u.id
     ORDER BY s.created_at DESC

@@ -111,8 +111,9 @@ $statuses = ['pending', 'repairing', 'ready', 'collected'];
 ?>
 
 <div class="section-header">
-  <h1>Repair Ticket #<?= (int)$repair['id'] ?></h1>
+  <h1>Repair #<?= (int)$repair['id'] ?> <span class="badge badge-primary" style="font-size:0.6em;letter-spacing:2px"><?= e($repair['repair_code'] ?? '') ?></span></h1>
   <div class="section-header-breadcrumb">
+    <a href="repair_receipt.php?id=<?= (int)$repair['id'] ?>" class="btn btn-outline-primary mr-2"><i class="fas fa-receipt"></i> Print Receipt</a>
     <div class="breadcrumb-item"><a href="repairs.php">Repairs</a></div>
     <div class="breadcrumb-item active">#<?= (int)$repair['id'] ?></div>
   </div>
@@ -133,7 +134,8 @@ $statuses = ['pending', 'repairing', 'ready', 'collected'];
         <div class="card-header"><h4>Repair Details</h4></div>
         <div class="card-body">
           <table class="table table-sm">
-            <tr><th width="35%">Customer</th><td><?= e($repair['customer_name']) ?></td></tr>
+            <tr><th width="35%">Repair Code</th><td><span class="badge badge-primary" style="font-size:1.1em;letter-spacing:2px;padding:6px 12px"><?= e($repair['repair_code'] ?? 'N/A') ?></span></td></tr>
+            <tr><th>Customer</th><td><?= e($repair['customer_name']) ?></td></tr>
             <tr><th>Phone</th><td><?= e($repair['customer_phone'] ?? '-') ?></td></tr>
             <tr><th>Device</th><td><?= e($repair['device_model']) ?></td></tr>
             <tr><th>Passcode</th><td><?= e($repair['device_passcode'] ?? '-') ?></td></tr>
