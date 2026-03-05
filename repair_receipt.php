@@ -107,7 +107,7 @@ $status_info = $status_map[$repair['status']] ?? ['❓', ucfirst($repair['status
     <?php endif; ?>
     <tr><td>Device:</td><td><?= e($repair['device_model']) ?></td></tr>
     <tr><td>Fault:</td><td><?= e($repair['fault_description']) ?></td></tr>
-    <tr><td>Technician:</td><td><?= e($repair['technician'] ?? 'N/A') ?></td></tr>
+    <tr><td>Booked By:</td><td><?= e($repair['technician'] ?? 'N/A') ?></td></tr>
   </table>
 
   <?php if (!empty($parts)): ?>
