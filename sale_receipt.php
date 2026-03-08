@@ -102,8 +102,13 @@ $items = $stmt->fetchAll();
   </div>
 
   <div class="receipt-footer">
+    <div style="font-size:11px;margin-bottom:8px;line-height:1.4">
+      <strong>⚠️ Important Notice:</strong><br>
+      Please test all gadgets thoroughly before leaving the store. Goods sold in good condition are <strong>not returnable</strong>.
+    </div>
     <p>Thank you for your patronage!</p>
-    <p><?= APP_NAME ?> v<?= APP_VERSION ?></p>
+    <p><em><?= APP_MOTTO ?></em></p>
+    <p style="font-size:10px;color:#999"><?= APP_NAME ?> v<?= APP_VERSION ?></p>
   </div>
 </body>
 </html>
