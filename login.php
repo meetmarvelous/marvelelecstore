@@ -69,7 +69,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="row">
           <div class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
             <div class="login-brand">
-               <img src="<?= OTIKA_ASSETS ?>img/logo.png" alt="logo" width="100" class="shadow-light rounded-circle">
+               <img src="<?= BASE_URL ?>assets/img/logo.svg" alt="logo" width="100">
+               <div style="margin-top:8px;font-weight:bold;font-size:1.1em"><?= APP_NAME ?></div>
+               <div style="font-size:0.85em;color:#6c757d"><?= APP_TAGLINE ?></div>
             </div>
             <div class="card card-primary">
               <div class="card-header">
@@ -108,7 +110,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               </div>
             </div>
             <div class="mt-5 text-muted text-center">
-              MarvelStore v<?= APP_VERSION ?>
+              <?= APP_NAME ?> v<?= APP_VERSION ?><br>
+              <small><em><?= APP_MOTTO ?></em></small>
             </div>
           </div>
         </div>

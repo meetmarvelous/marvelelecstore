@@ -29,14 +29,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && input_str('action') === 'delete') {
     redirect('products.php');
 }
 
-$products = $pdo->query("
-    SELECT p.*, c.name as category_name
-    FROM products p
-    LEFT JOIN categories c ON p.category_id = c.id
-    ORDER BY p.created_at DESC
-")->fetchAll();
+// Category filter
+$category_id = input_int('category');
+$category_name = null;
+if ($category_id) {
+    $stmt = $pdo->prepare("SELECT name FROM categories WHERE id = ?");
+    $stmt->execute([$category_id]);
+    $category_name = $stmt->fetchColumn();
+}
 
-$page_title = 'All Products';
+if ($category_id && $category_name) {
+    $stmt = $pdo->prepare("
+        SELECT p.*, c.name as category_name
+        FROM products p
+        LEFT JOIN categories c ON p.category_id = c.id
+        WHERE p.category_id = ?
+        ORDER BY p.created_at DESC
+    ");
+    $stmt->execute([$category_id]);
+    $products = $stmt->fetchAll();
+} else {
+    $products = $pdo->query("
+        SELECT p.*, c.name as category_name
+        FROM products p
+        LEFT JOIN categories c ON p.category_id = c.id
+        ORDER BY p.created_at DESC
+    ")->fetchAll();
+}
+
+$page_title = $category_name ? "Products: {$category_name}" : 'All Products';
 $current_page = 'products.php';
 $extra_css = [
     OTIKA_ASSETS . 'bundles/datatables/datatables.min.css',
@@ -53,8 +74,11 @@ require_once INCLUDES_PATH . 'sidebar.php';
 ?>
 
 <div class="section-header">
-  <h1>All Products</h1>
+  <h1><?= $category_name ? 'Products: ' . e($category_name) : 'All Products' ?></h1>
   <div class="section-header-button">
+    <?php if ($category_name): ?>
+    <a href="products.php" class="btn btn-outline-secondary mr-2"><i class="fas fa-times"></i> Clear Filter</a>
+    <?php endif; ?>
     <a href="product_add.php" class="btn btn-primary"><i class="fas fa-plus"></i> Add Product</a>
   </div>
 </div>

@@ -9,7 +9,10 @@ error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
 // ── Application ────────────────────────────────────────────────────────
-define('APP_NAME', 'MarvelStore');
+define('APP_NAME', 'Evergreen Global Technology');
+define('APP_SHORT_NAME', 'EGT');
+define('APP_TAGLINE', 'Technology Consultant & Mobile Phone Expert');
+define('APP_MOTTO', 'Technology is our pride');
 define('APP_VERSION', '1.0');
 
 // Base URL — auto-detects localhost subdirectory vs production domain root

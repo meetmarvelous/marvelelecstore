@@ -87,7 +87,7 @@ $pdo->exec("
 
 // Seed defaults
 $defaults = [
-    'store_name'     => 'MarvelStore',
+    'store_name'     => 'Evergreen Global Technology',
     'store_address'  => '',
     'store_phone'    => '',
     'receipt_footer'  => 'Thank you for your patronage!',

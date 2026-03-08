@@ -72,7 +72,7 @@ require_once INCLUDES_PATH . 'sidebar.php';
             <?= csrf_field() ?>
             <div class="form-group">
               <label>Store Name</label>
-              <input type="text" name="store_name" class="form-control" value="<?= e($settings['store_name'] ?? 'MarvelStore') ?>">
+              <input type="text" name="store_name" class="form-control" value="<?= e($settings['store_name'] ?? APP_NAME) ?>">
             </div>
             <div class="form-group">
               <label>Store Address</label>
@@ -97,7 +97,7 @@ require_once INCLUDES_PATH . 'sidebar.php';
       <div class="card">
         <div class="card-header"><h4><i class="fas fa-receipt"></i> Receipt Preview</h4></div>
         <div class="card-body text-center" style="font-family: monospace; border: 1px dashed #ccc; padding: 20px;">
-          <h5><strong><?= e($settings['store_name'] ?? 'MarvelStore') ?></strong></h5>
+          <h5><strong><?= e($settings['store_name'] ?? APP_NAME) ?></strong></h5>
           <?php if (!empty($settings['store_address'])): ?>
             <p class="mb-0"><?= e($settings['store_address']) ?></p>
           <?php endif; ?>

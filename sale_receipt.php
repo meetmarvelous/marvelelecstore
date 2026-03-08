@@ -60,7 +60,8 @@ $items = $stmt->fetchAll();
 
   <div class="receipt-header">
     <h2><?= APP_NAME ?></h2>
-    <div>Electronics Retail & Repair</div>
+    <div><?= APP_TAGLINE ?></div>
+    <div style="font-size:11px;margin-top:3px"><em><?= APP_MOTTO ?></em></div>
   </div>
 
   <div class="receipt-meta">

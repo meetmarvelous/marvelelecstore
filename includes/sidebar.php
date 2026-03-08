@@ -20,7 +20,7 @@ function is_menu_open(array $pages, string $current): string {
       <div class="main-sidebar sidebar-style-2">
         <aside id="sidebar-wrapper">
           <div class="sidebar-brand">
-            <a href="<?= BASE_URL ?>index.php"> <span class="logo-name">MARVELSTORE</span></a>
+            <a href="<?= BASE_URL ?>index.php"> <img src="<?= BASE_URL ?>assets/img/logo.svg" alt="<?= APP_NAME ?>" style="height:42px;margin-right:6px;vertical-align:middle"><span class="logo-name"><?= APP_SHORT_NAME ?></span></a>
           </div>
           <ul class="sidebar-menu">
 

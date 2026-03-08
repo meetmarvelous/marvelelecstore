@@ -107,8 +107,8 @@ require_once INCLUDES_PATH . 'sidebar.php';
                   <?php foreach ($categories as $i => $cat): ?>
                   <tr>
                     <td><?= $i + 1 ?></td>
-                    <td><?= e($cat['name']) ?></td>
-                    <td><span class="badge badge-light"><?= (int)$cat['product_count'] ?></span></td>
+                    <td><a href="products.php?category=<?= (int)$cat['id'] ?>" class="text-dark font-weight-bold"><?= e($cat['name']) ?></a></td>
+                    <td><a href="products.php?category=<?= (int)$cat['id'] ?>" class="badge badge-light"><?= (int)$cat['product_count'] ?></a></td>
                     <td>
                       <form method="POST" class="d-inline delete-form">
                         <?= csrf_field() ?>
