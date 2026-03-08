@@ -61,7 +61,11 @@ function is_menu_open(array $pages, string $current): string {
               <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="briefcase"></i><span>Repairs</span></a>
               <ul class="dropdown-menu">
                 <li class="<?= is_active('repair_add.php', $current_page) ?>"><a class="nav-link" href="<?= BASE_URL ?>repair_add.php">New Repair</a></li>
-                <li class="<?= is_active('repairs.php', $current_page) ?>"><a class="nav-link" href="<?= BASE_URL ?>repairs.php">All Repairs</a></li>
+                <li class="<?= is_active('repairs.php', $current_page) && empty($_GET['status']) ? 'active' : '' ?>"><a class="nav-link" href="<?= BASE_URL ?>repairs.php">All Repairs</a></li>
+                <li class="<?= ($_GET['status'] ?? '') === 'pending' ? 'active' : '' ?>"><a class="nav-link" href="<?= BASE_URL ?>repairs.php?status=pending">⏳ Pending</a></li>
+                <li class="<?= ($_GET['status'] ?? '') === 'repairing' ? 'active' : '' ?>"><a class="nav-link" href="<?= BASE_URL ?>repairs.php?status=repairing">🔧 Repairing</a></li>
+                <li class="<?= ($_GET['status'] ?? '') === 'ready' ? 'active' : '' ?>"><a class="nav-link" href="<?= BASE_URL ?>repairs.php?status=ready">✅ Ready</a></li>
+                <li class="<?= ($_GET['status'] ?? '') === 'collected' ? 'active' : '' ?>"><a class="nav-link" href="<?= BASE_URL ?>repairs.php?status=collected">📦 Collected</a></li>
               </ul>
             </li>
 

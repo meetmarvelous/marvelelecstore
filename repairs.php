@@ -11,14 +11,33 @@ require_login();
 
 $pdo = get_db();
 
-$repairs = $pdo->query("
-    SELECT r.*, u.full_name as created_by
-    FROM repairs r
-    LEFT JOIN users u ON r.user_id = u.id
-    ORDER BY r.created_at DESC
-")->fetchAll();
+// Status filter
+$status_filter = input_str('status');
+$allowed_statuses = ['pending', 'repairing', 'ready', 'collected'];
+if ($status_filter && !in_array($status_filter, $allowed_statuses)) {
+    $status_filter = null;
+}
 
-$page_title = 'All Repairs';
+if ($status_filter) {
+    $stmt = $pdo->prepare("
+        SELECT r.*, u.full_name as created_by
+        FROM repairs r
+        LEFT JOIN users u ON r.user_id = u.id
+        WHERE r.status = ?
+        ORDER BY r.created_at DESC
+    ");
+    $stmt->execute([$status_filter]);
+    $repairs = $stmt->fetchAll();
+} else {
+    $repairs = $pdo->query("
+        SELECT r.*, u.full_name as created_by
+        FROM repairs r
+        LEFT JOIN users u ON r.user_id = u.id
+        ORDER BY r.created_at DESC
+    ")->fetchAll();
+}
+
+$page_title = $status_filter ? ucfirst($status_filter) . ' Repairs' : 'All Repairs';
 $current_page = 'repairs.php';
 $extra_css = [
     OTIKA_ASSETS . 'bundles/datatables/datatables.min.css',
@@ -34,8 +53,11 @@ require_once INCLUDES_PATH . 'sidebar.php';
 ?>
 
 <div class="section-header">
-  <h1>All Repairs</h1>
+  <h1><?= $status_filter ? ucfirst(e($status_filter)) . ' Repairs' : 'All Repairs' ?></h1>
   <div class="section-header-button">
+    <?php if ($status_filter): ?>
+    <a href="repairs.php" class="btn btn-outline-secondary mr-2"><i class="fas fa-times"></i> Clear Filter</a>
+    <?php endif; ?>
     <a href="repair_add.php" class="btn btn-primary"><i class="fas fa-plus"></i> New Repair</a>
   </div>
 </div>

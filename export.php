@@ -8,6 +8,7 @@ require_once __DIR__ . '/config.php';
 require_once INCLUDES_PATH . 'db.php';
 require_once INCLUDES_PATH . 'auth.php';
 require_once INCLUDES_PATH . 'helpers.php';
+require_once INCLUDES_PATH . 'logger.php';
 require_login();
 
 $pdo  = get_db();
@@ -33,12 +34,11 @@ switch ($type) {
         break;
 
     case 'sales':
-        $headers = ['Sale ID', 'Date', 'Cashier', 'Customer', 'Payment Method', 'Subtotal', 'Discount', 'Total'];
+        $headers = ['Sale ID', 'Date', 'Cashier', 'Customer', 'Serial/IMEI', 'Payment Method', 'Subtotal', 'Discount', 'Total'];
         $stmt = $pdo->prepare("
-            SELECT s.id, s.created_at, u.full_name, cu.name as customer, s.payment_method, s.subtotal, s.discount, s.total
+            SELECT s.id, s.created_at, u.full_name, s.customer_name, s.serial_number, s.payment_method, s.subtotal, s.discount, s.total
             FROM sales s 
             LEFT JOIN users u ON s.user_id = u.id
-            LEFT JOIN customers cu ON s.customer_id = cu.id
             WHERE DATE(s.created_at) BETWEEN ? AND ?
             ORDER BY s.created_at DESC
         ");
@@ -47,9 +47,9 @@ switch ($type) {
         break;
 
     case 'repairs':
-        $headers = ['Repair ID', 'Date', 'Technician', 'Customer', 'Phone', 'Device', 'Status', 'Cost'];
+        $headers = ['Repair ID', 'Code', 'Date', 'Booked By', 'Customer', 'Phone', 'Device', 'Status', 'Cost'];
         $stmt = $pdo->prepare("
-            SELECT r.id, r.created_at, u.full_name, r.customer_name, r.customer_phone, r.device_model, r.status, r.repair_cost
+            SELECT r.id, r.repair_code, r.created_at, u.full_name, r.customer_name, r.customer_phone, r.device_model, r.status, r.repair_cost
             FROM repairs r LEFT JOIN users u ON r.user_id = u.id
             WHERE DATE(r.created_at) BETWEEN ? AND ?
             ORDER BY r.created_at DESC
@@ -79,6 +79,9 @@ switch ($type) {
         http_response_code(400);
         die('Invalid export type. Allowed: products, sales, repairs, activity_log, customers');
 }
+
+// Log the export
+log_activity('export', $type, null, "Exported {$type} CSV (" . count($rows) . " rows, {$from} to {$to})");
 
 // Output CSV
 header('Content-Type: text/csv; charset=UTF-8');

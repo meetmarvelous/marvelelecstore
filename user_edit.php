@@ -7,6 +7,7 @@ require_once INCLUDES_PATH . 'db.php';
 require_once INCLUDES_PATH . 'auth.php';
 require_once INCLUDES_PATH . 'csrf.php';
 require_once INCLUDES_PATH . 'helpers.php';
+require_once INCLUDES_PATH . 'logger.php';
 require_role('admin');
 
 $pdo = get_db();
@@ -45,6 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmt = $pdo->prepare("UPDATE users SET full_name=?, role=? WHERE id=?");
                     $stmt->execute([$full_name, $role, $id]);
                 }
+                $pwd_note = !empty($password) ? ' (password reset)' : '';
+                log_activity('user_edit', 'user', $id, "Edited user '{$user['username']}' — name: {$full_name}, role: {$role}{$pwd_note}");
                 set_flash('success', 'User updated successfully.');
                 redirect('users.php');
             } catch (PDOException $e) {
