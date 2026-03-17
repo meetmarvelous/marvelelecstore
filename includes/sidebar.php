@@ -73,7 +73,10 @@ function is_menu_open(array $pages, string $current): string {
             <!-- ── Reports (Admin) ──────────────────────────────── -->
             <li class="menu-header">Reports</li>
             <li class="<?= is_active('reports.php', $current_page) ?>">
-              <a href="<?= BASE_URL ?>reports.php" class="nav-link"><i data-feather="bar-chart"></i><span>Reports</span></a>
+              <a href="<?= BASE_URL ?>reports.php" class="nav-link"><i data-feather="bar-chart"></i><span>General Reports</span></a>
+            </li>
+            <li class="<?= is_active('report_weekly.php', $current_page) ?>">
+              <a href="<?= BASE_URL ?>report_weekly.php" class="nav-link"><i data-feather="calendar"></i><span>Weekly Report</span></a>
             </li>
 
             <!-- ── User Management (Admin) ──────────────────────── -->

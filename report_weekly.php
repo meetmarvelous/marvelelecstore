@@ -12,9 +12,14 @@ require_role('admin');
 
 $pdo = get_db();
 
+// Weekly Default (Sunday to Saturday)
+$dow = date('w');
+$default_from = date('Y-m-d', strtotime("-{$dow} days"));
+$default_to = date('Y-m-d', strtotime('+' . (6 - $dow) . ' days'));
+
 // Date range
-$from = input_str('from') ?: date('Y-m-01');
-$to   = input_str('to')   ?: date('Y-m-d');
+$from = input_str('from') ?: $default_from;
+$to   = input_str('to')   ?: $default_to;
 
 // Summary stats
 $stmt = $pdo->prepare("SELECT COUNT(*) as count, COALESCE(SUM(total),0) as revenue, COALESCE(SUM(discount),0) as discounts FROM sales WHERE DATE(created_at) BETWEEN ? AND ?");
@@ -52,8 +57,8 @@ $stmt = $pdo->prepare("
 $stmt->execute([$from, $to]);
 $daily = $stmt->fetchAll();
 
-$page_title = 'Reports';
-$current_page = 'reports.php';
+$page_title = 'Weekly Report';
+$current_page = 'report_weekly.php';
 $extra_css = [];
 $extra_js = [OTIKA_ASSETS . 'bundles/apexcharts/apexcharts.min.js'];
 
@@ -62,7 +67,7 @@ require_once INCLUDES_PATH . 'sidebar.php';
 ?>
 
 <div class="section-header">
-  <h1><i class="fas fa-chart-pie"></i> Reports</h1>
+  <h1><i class="fas fa-calendar-week"></i> Weekly Report</h1>
 </div>
 
 <div class="section-body">

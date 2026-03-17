@@ -54,6 +54,18 @@ $categories = $pdo->query("
     ORDER BY c.name
 ")->fetchAll();
 
+$total_products = $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
+$total_categories = count($categories);
+
+$inv = $pdo->query("
+    SELECT 
+        COALESCE(SUM(quantity * cost_price),0) as cost_val, 
+        COALESCE(SUM(quantity * selling_price),0) as retail_val, 
+        SUM(CASE WHEN cost_price <= 0 OR cost_price IS NULL THEN 1 ELSE 0 END) as missing_cost_count,
+        SUM(CASE WHEN selling_price <= 0 OR selling_price IS NULL THEN 1 ELSE 0 END) as missing_retail_count
+    FROM products
+")->fetch();
+
 $page_title = 'Categories';
 $current_page = 'categories.php';
 $extra_js = [OTIKA_ASSETS . 'bundles/sweetalert/sweetalert.min.js'];
@@ -73,6 +85,51 @@ require_once INCLUDES_PATH . 'sidebar.php';
       <ul class="mb-0"><?php foreach ($errors as $err): ?><li><?= e($err) ?></li><?php endforeach; ?></ul>
     </div>
   <?php endif; ?>
+
+  <div class="row">
+    <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+      <div class="card card-statistic-1">
+        <div class="card-icon bg-warning"><i class="fas fa-boxes"></i></div>
+        <div class="card-wrap">
+          <div class="card-header"><h4>Total Products</h4></div>
+          <div class="card-body"><?= (int)$total_products ?></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+      <div class="card card-statistic-1">
+        <div class="card-icon bg-primary"><i class="fas fa-tags"></i></div>
+        <div class="card-wrap">
+          <div class="card-header"><h4>Categories</h4></div>
+          <div class="card-body"><?= (int)$total_categories ?></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+      <div class="card card-statistic-1">
+        <div class="card-icon bg-danger"><i class="fas fa-money-bill-wave"></i></div>
+        <div class="card-wrap">
+          <div class="card-header"><h4>Inv. Cost Value</h4></div>
+          <div class="card-body" style="font-size: 16px; white-space: nowrap; letter-spacing: -0.5px;"><?= format_naira($inv['cost_val']) ?></div>
+          <?php if ($inv['missing_cost_count'] > 0): ?>
+          <div class="text-small text-danger" style="margin-top: 2px; font-weight: bold; line-height: 1.1; font-size: 11px;"><?= (int)$inv['missing_cost_count'] ?> item(s) missing cost</div>
+          <?php endif; ?>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+      <div class="card card-statistic-1">
+        <div class="card-icon bg-success"><i class="fas fa-hand-holding-usd"></i></div>
+        <div class="card-wrap">
+          <div class="card-header"><h4>Inv. Retail Value</h4></div>
+          <div class="card-body" style="font-size: 16px; white-space: nowrap; letter-spacing: -0.5px;"><?= format_naira($inv['retail_val']) ?></div>
+          <?php if ($inv['missing_retail_count'] > 0): ?>
+          <div class="text-small text-danger" style="margin-top: 2px; font-weight: bold; line-height: 1.1; font-size: 11px;"><?= (int)$inv['missing_retail_count'] ?> item(s) missing price</div>
+          <?php endif; ?>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="row">
     <div class="col-md-5">
@@ -119,6 +176,19 @@ require_once INCLUDES_PATH . 'sidebar.php';
                     </td>
                   </tr>
                   <?php endforeach; ?>
+                <?php endif; ?>
+                
+                <?php 
+                // Append Uncategorized row
+                $uncategorized_count = $pdo->query("SELECT COUNT(*) FROM products WHERE category_id IS NULL OR category_id = 0")->fetchColumn();
+                ?>
+                <?php if ($uncategorized_count > 0): ?>
+                  <tr class="table-warning">
+                    <td class="text-muted">-</td>
+                    <td><a href="products.php?category=0" class="text-danger font-italic font-weight-bold">Uncategorized</a></td>
+                    <td><a href="products.php?category=0" class="badge badge-danger"><?= (int)$uncategorized_count ?></a></td>
+                    <td><span class="text-muted" style="font-size: 11px;">System Default</span></td>
+                  </tr>
                 <?php endif; ?>
               </tbody>
             </table>
